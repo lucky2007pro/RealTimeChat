@@ -133,9 +133,6 @@
   <ItemGroup>
     <Text Include="Dockerfile" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="httplib.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\asio-cppp-latest.1.24.0\build\native\asio-cppp-latest.targets" Condition="Exists('..\packages\asio-cppp-latest.1.24.0\build\native\asio-cppp-latest.targets')" />
