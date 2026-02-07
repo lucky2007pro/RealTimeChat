@@ -26,4 +26,7 @@
     <None Include="packages.config" />
     <None Include=".gitignore" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Dockerfile" />
+  </ItemGroup>
 </Project>
