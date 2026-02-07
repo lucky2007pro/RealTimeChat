@@ -8,7 +8,8 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN g++ -o chat_server main.cpp -lpthread -latomic -std=c++17
+# DIQQAT: main.cpp o'rniga RealTimeChat.cpp yozildi
+RUN g++ -o chat_server RealTimeChat.cpp -lpthread -latomic -std=c++17
 
 EXPOSE 8080
 
