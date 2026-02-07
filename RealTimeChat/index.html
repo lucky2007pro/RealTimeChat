@@ -3,196 +3,401 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C++ Pro Chat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Cosmic Chat C++</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f0f10;
-            --chat-bg: #18181b;
-            --primary: #6366f1;
-            --my-msg-bg: #4f46e5;
-            --other-msg-bg: #27272a;
-            --text-color: #f4f4f5;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --text-color: #ffffff;
+            --bubble-me: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+            --bubble-other: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background: #0f0c29; /* fallback */
+            background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+            height: 100vh;
             display: flex;
             justify-content: center;
-            height: 100vh;
+            align-items: center;
+            color: var(--text-color);
             overflow: hidden;
         }
 
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background-color: var(--chat-bg);
-            display: flex;
-            flex-direction: column;
-            position: relative;
+        /* Orqa fon effektlari (Floating Orbs) */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
         }
 
-        /* Login Oynasi (Modal) */
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: #764ba2;
+            top: -50px;
+            left: -50px;
+            opacity: 0.5;
+            animation: float 10s infinite alternate;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #2575fc;
+            bottom: -100px;
+            right: -100px;
+            opacity: 0.4;
+            animation: float 15s infinite alternate-reverse;
+        }
+
+        @keyframes float {
+            from {
+                transform: translate(0, 0);
+            }
+
+            to {
+                transform: translate(30px, 50px);
+            }
+        }
+
+        /* Asosiy Oyna */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 900px;
+            height: 90vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- LOGIN MODAL --- */
         #login-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(15px);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 100;
         }
 
-        .login-box {
-            background: #27272a;
-            padding: 30px;
-            border-radius: 16px;
+        .login-card {
+            background: rgba(30, 30, 40, 0.8);
+            padding: 40px;
+            border-radius: 20px;
             text-align: center;
-            width: 300px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            border: var(--glass-border);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            width: 320px;
+            transform: scale(0.9);
+            animation: popIn 0.3s forwards;
         }
 
-            .login-box h2 {
+            .login-card h2 {
                 margin-bottom: 20px;
+                font-weight: 600;
+                letter-spacing: 1px;
             }
 
-            .login-box input {
+            .login-card input {
                 width: 100%;
-                padding: 12px;
-                margin-bottom: 15px;
-                border-radius: 8px;
-                border: 1px solid #3f3f46;
-                background: #18181b;
+                padding: 15px;
+                margin-bottom: 20px;
+                background: rgba(255,255,255,0.05);
+                border: var(--glass-border);
+                border-radius: 12px;
                 color: white;
-                box-sizing: border-box; /* Input chetga chiqib ketmasligi uchun */
+                outline: none;
+                text-align: center;
+                font-size: 1rem;
+                transition: 0.3s;
             }
 
-            .login-box button {
+                .login-card input:focus {
+                    border-color: #6a11cb;
+                    background: rgba(255,255,255,0.1);
+                }
+
+            .login-card button {
                 width: 100%;
-                padding: 12px;
-                background: var(--primary);
-                color: white;
+                padding: 15px;
+                border-radius: 12px;
                 border: none;
-                border-radius: 8px;
-                cursor: pointer;
+                background: var(--bubble-me);
+                color: white;
                 font-weight: bold;
+                cursor: pointer;
+                transition: 0.3s;
             }
 
-        /* Chat Header */
+                .login-card button:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 0 20px rgba(106, 17, 203, 0.5);
+                }
+
+        /* --- HEADER --- */
         header {
-            padding: 15px 20px;
-            background: #27272a;
-            border-bottom: 1px solid #3f3f46;
+            padding: 20px 30px;
+            border-bottom: var(--glass-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: rgba(0,0,0,0.2);
         }
 
-        /* Chat Box */
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #555;
+            transition: 0.3s;
+        }
+
+            .dot.online {
+                background: #00ff88;
+                box-shadow: 0 0 10px #00ff88;
+            }
+
+            .dot.offline {
+                background: #ff4757;
+            }
+
+        /* --- CHAT AREA --- */
         #chat-box {
             flex: 1;
-            padding: 20px;
+            padding: 20px 30px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 15px;
+            scroll-behavior: smooth;
         }
+
+            #chat-box::-webkit-scrollbar {
+                width: 5px;
+            }
+
+            #chat-box::-webkit-scrollbar-thumb {
+                background: rgba(255,255,255,0.2);
+                border-radius: 10px;
+            }
 
         .message-row {
             display: flex;
             flex-direction: column;
             max-width: 70%;
+            position: relative;
         }
 
-        /* O'zimni xabarim */
-        .my-message {
+        .my-msg {
             align-self: flex-end;
             align-items: flex-end;
         }
 
-            .my-message .bubble {
-                background-color: var(--my-msg-bg);
-                border-radius: 12px 12px 0 12px;
-            }
-
-        /* Boshqalar xabari */
-        .other-message {
+        .other-msg {
             align-self: flex-start;
             align-items: flex-start;
         }
 
-            .other-message .bubble {
-                background-color: var(--other-msg-bg);
-                border-radius: 12px 12px 12px 0;
-            }
-
         .username {
             font-size: 0.75rem;
-            color: #a1a1aa;
-            margin-bottom: 4px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 5px;
+            margin-left: 10px;
         }
 
         .bubble {
-            padding: 10px 14px;
+            padding: 12px 18px;
+            border-radius: 18px;
             line-height: 1.5;
+            font-size: 0.95rem;
+            position: relative;
             word-wrap: break-word;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            animation: slideUp 0.3s ease;
         }
 
-        /* Input Area */
+        .my-msg .bubble {
+            background: var(--bubble-me);
+            border-bottom-right-radius: 4px;
+        }
+
+        .other-msg .bubble {
+            background: var(--bubble-other);
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .time {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 5px;
+            text-align: right;
+            display: block;
+        }
+
+        /* --- INPUT AREA --- */
         .input-area {
-            padding: 20px;
-            background: #27272a;
+            padding: 20px 30px;
+            background: rgba(0,0,0,0.2);
+            border-top: var(--glass-border);
             display: flex;
-            gap: 10px;
+            gap: 15px;
+            align-items: center;
         }
 
-            .input-area input {
-                flex: 1;
-                padding: 12px;
-                border-radius: 8px;
-                border: none;
-                background: #3f3f46;
-                color: white;
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50px;
+            border: var(--glass-border);
+            padding: 5px 20px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+            .input-wrapper:focus-within {
+                background: rgba(255,255,255,0.1);
+                border-color: rgba(255,255,255,0.3);
             }
 
-            .input-area button {
-                padding: 0 20px;
-                background: var(--primary);
-                border: none;
-                border-radius: 8px;
-                color: white;
-                cursor: pointer;
+        .input-area input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bubble-me);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+            .send-btn:hover {
+                transform: scale(1.1) rotate(-10deg);
             }
+
+            .send-btn:active {
+                transform: scale(0.9);
+            }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobil */
+        @media (max-width: 600px) {
+            .container {
+                height: 100vh;
+                border-radius: 0;
+                border: none;
+            }
+
+            .message-row {
+                max-width: 85%;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
     <div class="container">
         <div id="login-overlay">
-            <div class="login-box">
-                <h2>Xush kelibsiz! 👋</h2>
-                <input type="text" id="usernameInput" placeholder="Ismingizni yozing..." autocomplete="off">
-                <button onclick="joinChat()">Kirish</button>
+            <div class="login-card">
+                <h2>KIRISH</h2>
+                <input type="text" id="usernameInput" placeholder="Ismingizni kiriting..." maxlength="15" autocomplete="off">
+                <button onclick="joinChat()">BOSHLASH</button>
             </div>
         </div>
 
         <header>
-            <h3 id="headerTitle">Chat Room</h3>
-            <div style="font-size: 0.8rem; color: #aaa;" id="statusText">Oflayn</div>
+            <h3 style="letter-spacing: 1px;">COSMIC CHAT</h3>
+            <div class="status-badge">
+                <div id="statusDot" class="dot"></div>
+                <span id="statusText">Ulanmoqda...</span>
+            </div>
         </header>
 
         <div id="chat-box"></div>
 
         <div class="input-area">
-            <input type="text" id="msgInput" placeholder="Xabar yozing..." autocomplete="off">
-            <button onclick="sendMessage()">➤</button>
+            <div class="input-wrapper">
+                <input type="text" id="msgInput" placeholder="Xabar yozing..." autocomplete="off">
+            </div>
+            <button class="send-btn" onclick="sendMessage()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
         </div>
     </div>
 
@@ -201,47 +406,54 @@
         let myUsername = localStorage.getItem('chat_username') || "";
         const loginOverlay = document.getElementById('login-overlay');
         const usernameInput = document.getElementById('usernameInput');
+        const chatBox = document.getElementById('chat-box');
+        const statusText = document.getElementById('statusText');
+        const statusDot = document.getElementById('statusDot');
 
-        // Agar oldin kirgan bo'lsa, ismini avtomatik yozib qo'yamiz
-        if (myUsername) {
-            usernameInput.value = myUsername;
-        }
+        if (myUsername) usernameInput.value = myUsername;
 
         function joinChat() {
             const name = usernameInput.value.trim();
-            if (!name) return alert("Iltimos, ism yozing!");
-
+            if (!name) return;
             myUsername = name;
-            localStorage.setItem('chat_username', myUsername); // Ismni xotirada saqlash
-            loginOverlay.style.display = 'none'; // Oynani yopish
-            connectWebSocket(); // Serverga ulanish
+            localStorage.setItem('chat_username', myUsername);
+            loginOverlay.style.opacity = '0';
+            setTimeout(() => loginOverlay.style.display = 'none', 300);
+            connectWebSocket();
         }
 
         function connectWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
             const host = window.location.host;
-
             socket = new WebSocket(protocol + host + '/ws');
-            const statusText = document.getElementById('statusText');
 
             socket.onopen = () => {
-                statusText.innerText = "Online ✅";
-                statusText.style.color = "#4ade80";
+                statusText.innerText = "ONLINE";
+                statusDot.classList.add('online');
+                statusDot.classList.remove('offline');
             };
 
             socket.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
-                    displayMessage(data.username, data.content);
-                } catch (e) {
-                    console.error("JSON xato:", e);
-                }
+
+                    // --- MANTIQIY TUZATISH ---
+                    // Agar xabar mendan bo'lsa va u allaqachon chatda oxirgisi bo'lsa,
+                    // uni qayta chizmaymiz (Chunki Optimistic UI allaqachon chizib bo'lgan).
+                    // Bu "Double rendering"ni oldini oladi.
+                    if (data.username === myUsername) {
+                        if (isLastMessageMineAndSame(data.content)) return;
+                    }
+
+                    displayMessage(data.username, data.content, data.username === myUsername);
+                } catch (e) { console.error(e); }
             };
 
             socket.onclose = () => {
-                statusText.innerText = "Aloqa uzildi ❌";
-                statusText.style.color = "#f87171";
-                setTimeout(connectWebSocket, 3000); // 3 sekundda qayta ulanish
+                statusText.innerText = "OFFLINE";
+                statusDot.classList.remove('online');
+                statusDot.classList.add('offline');
+                setTimeout(connectWebSocket, 3000);
             };
         }
 
@@ -250,47 +462,50 @@
             const text = input.value.trim();
 
             if (text && socket && socket.readyState === WebSocket.OPEN) {
-                // Serverga JSON jo'natamiz
-                const payload = JSON.stringify({
-                    username: myUsername,
-                    content: text
-                });
-                socket.send(payload);
+                // 1. OPTIMISTIC UI: Darhol ekranga chiqaramiz (Tezlik hissi uchun)
+                displayMessage(myUsername, text, true);
+
+                // 2. Serverga yuboramiz
+                socket.send(JSON.stringify({ username: myUsername, content: text }));
                 input.value = '';
+                input.focus();
             }
         }
 
-        function displayMessage(user, text) {
-            const chatBox = document.getElementById('chat-box');
-            const isMe = user === myUsername;
+        // Oxirgi xabar meniki ekanligini va matni bir xilligini tekshirish
+        function isLastMessageMineAndSame(content) {
+            const lastMsg = chatBox.lastElementChild;
+            if (!lastMsg) return false;
+            if (!lastMsg.classList.contains('my-msg')) return false;
 
+            const bubble = lastMsg.querySelector('.bubble');
+            // Matn ichidagi vaqt spanini hisobga olmaslik uchun:
+            const textOnly = bubble.childNodes[0].textContent.trim();
+            return textOnly === content;
+        }
+
+        function displayMessage(user, text, isMe) {
             const row = document.createElement('div');
-            row.className = 'message-row ' + (isMe ? 'my-message' : 'other-message');
+            row.className = 'message-row ' + (isMe ? 'my-msg' : 'other-msg');
 
-            const nameTag = document.createElement('div');
-            nameTag.className = 'username';
-            nameTag.innerText = user;
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-            const bubble = document.createElement('div');
-            bubble.className = 'bubble';
-            bubble.innerText = text;
+            let html = '';
+            if (!isMe) html += `<div class="username">${user}</div>`;
 
-            if (!isMe) row.appendChild(nameTag); // Faqat boshqalarning ismi ko'rinsin
-            row.appendChild(bubble);
+            html += `<div class="bubble">
+                            ${text}
+                            <span class="time">${time}</span>
+                         </div>`;
 
+            row.innerHTML = html;
             chatBox.appendChild(row);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Enter bosganda ishlashi uchun
-        document.getElementById('msgInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        // Login oynasida Enter bosganda
-        document.getElementById('usernameInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') joinChat();
-        });
+        // Enter events
+        document.getElementById('msgInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        document.getElementById('usernameInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') joinChat(); });
     </script>
 
 </body>
