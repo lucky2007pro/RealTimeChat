@@ -3,107 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C++ Super Chat</title>
+    <title>C++ Ultra Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #121212;
+            --chat-bg: #1e1e1e;
+            --primary: #6c5ce7;
+            --primary-hover: #5649c0;
+            --text-color: #dfe6e9;
+            --msg-bg: #2d3436;
+            --system-msg: #00cec9;
+            --error-msg: #ff7675;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1e1e1e;
-            color: #fff;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
-            margin: 0;
+            overflow: hidden;
         }
 
-        #chat-box {
-            width: 90%;
-            max-width: 600px;
-            height: 70%;
-            background-color: #252526;
-            border-radius: 10px;
-            padding: 20px;
-            overflow-y: auto;
-            margin-top: 20px;
+        /* Asosiy konteyner */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            height: 90vh;
+            background-color: var(--chat-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             border: 1px solid #333;
         }
 
-        .message {
-            background-color: #007acc;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 10px;
-            max-width: 80%;
-            word-wrap: break-word;
+        /* Header qismi */
+        header {
+            padding: 20px;
+            background: rgba(45, 52, 54, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        #input-area {
-            width: 90%;
-            max-width: 600px;
+            header h2 {
+                font-size: 1.2rem;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #ff7675;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff7675;
+            transition: 0.3s;
+        }
+
+        .connected .status-dot {
+            background-color: #00b894;
+            box-shadow: 0 0 10px #00b894;
+        }
+
+        /* Chat oynasi */
+        #chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
             display: flex;
-            margin-top: 10px;
+            flex-direction: column;
+            gap: 12px;
+            scroll-behavior: smooth;
+        }
+
+            /* Scrollbar dizayni */
+            #chat-box::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            #chat-box::-webkit-scrollbar-thumb {
+                background-color: #444;
+                border-radius: 3px;
+            }
+
+        /* Xabarlar dizayni */
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background-color: var(--msg-bg);
+            line-height: 1.5;
+            font-size: 0.95rem;
+            animation: fadeIn 0.3s ease;
+            word-wrap: break-word;
+            align-self: flex-start; /* Hozircha hamma xabar chapdan chiqadi */
+            border-left: 3px solid var(--primary);
+        }
+
+        .system-message {
+            align-self: center;
+            background: transparent;
+            color: var(--system-msg);
+            font-size: 0.8rem;
+            border: none;
+            padding: 5px;
+        }
+
+        .error-message {
+            color: var(--error-msg);
+        }
+
+        /* Input qismi */
+        .input-area {
+            padding: 20px;
+            background-color: var(--chat-bg);
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 10px;
         }
 
         input {
             flex: 1;
             padding: 15px;
-            border-radius: 5px;
-            border: none;
-            background-color: #3c3c3c;
+            border-radius: 12px;
+            border: 1px solid #444;
+            background-color: #2d3436;
             color: white;
+            font-size: 1rem;
+            transition: 0.2s;
             outline: none;
         }
 
+            input:focus {
+                border-color: var(--primary);
+                background-color: #353b48;
+            }
+
         button {
-            padding: 15px 30px;
-            margin-left: 10px;
+            padding: 0 25px;
             border: none;
-            background-color: #0e639c;
+            background-color: var(--primary);
             color: white;
-            border-radius: 5px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
             button:hover {
-                background-color: #1177bb;
+                background-color: var(--primary-hover);
+                transform: translateY(-2px);
             }
+
+            button:active {
+                transform: translateY(0);
+            }
+
+        /* Animatsiya */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobil moslashuv */
+        @media (max-width: 600px) {
+            .container {
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <h2>⚡ C++ Chat (Port 8080)</h2>
-    <div id="chat-box"></div>
+    <div class="container">
+        <header id="headerStatus">
+            <h2><div class="status-dot"></div> C++ Real-Time Chat</h2>
+            <span style="font-size: 0.8rem; color: #aaa;">Port: 8080 (Secure)</span>
+        </header>
 
-    <div id="input-area">
-        <input type="text" id="msgInput" placeholder="Xabar yozing..." onkeypress="handleEnter(event)">
-        <button onclick="sendMessage()">Yuborish</button>
+        <div id="chat-box">
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="msgInput" placeholder="Xabar yozing..." autocomplete="off">
+            <button onclick="sendMessage()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+        </div>
     </div>
 
     <script>
-        // DIQQAT: Port 8080 ga o'zgartirildi
-        // window.location.hostname - bu avtomatik localhost yoki IP ni oladi
-        const socket = new WebSocket('ws://' + window.location.hostname + ':8080/ws');
         const chatBox = document.getElementById('chat-box');
+        const headerStatus = document.getElementById('headerStatus');
+        const msgInput = document.getElementById('msgInput');
+        let socket;
+        let retryInterval = 3000; // 3 sekundda qayta ulanish
 
-        socket.onopen = function () {
-            addMessage("Tizim: Serverga ulanildi! ✅");
-        };
+        function connect() {
+            // Protokolni va Hostni avtomatik aniqlash (Render & Localhost uchun)
+            const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+            const host = window.location.host;
 
-        socket.onmessage = function (event) {
-            addMessage(event.data);
-        };
+            console.log("Ulanishga harakat: " + protocol + host + '/ws');
 
-        socket.onclose = function () {
-            addMessage("Tizim: Aloqa uzildi ❌");
-        };
+            socket = new WebSocket(protocol + host + '/ws');
+
+            socket.onopen = function () {
+                addSystemMessage("Serverga muvaffaqiyatli ulandi! 🚀");
+                headerStatus.classList.add('connected');
+            };
+
+            socket.onmessage = function (event) {
+                addMessage(event.data);
+            };
+
+            socket.onclose = function (event) {
+                headerStatus.classList.remove('connected');
+                addSystemMessage("Aloqa uzildi. Qayta ulanmoqda...", true);
+                // Avtomatik qayta ulanish (Reconnect logic)
+                setTimeout(connect, retryInterval);
+            };
+
+            socket.onerror = function (error) {
+                console.error("WebSocket xatosi:", error);
+                socket.close();
+            };
+        }
+
+        // Sahifa ochilganda ulanish
+        connect();
 
         function sendMessage() {
-            const input = document.getElementById('msgInput');
-            const message = input.value;
-            if (message) {
+            const message = msgInput.value.trim();
+            if (message && socket.readyState === WebSocket.OPEN) {
                 socket.send(message);
-                input.value = '';
+                msgInput.value = '';
+                msgInput.focus();
+            } else {
+                addSystemMessage("Xabar yuborilmadi: Server bilan aloqa yo'q.", true);
             }
         }
 
@@ -112,12 +281,26 @@
             msgDiv.classList.add('message');
             msgDiv.innerText = text;
             chatBox.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function addSystemMessage(text, isError = false) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('system-message');
+            if (isError) msgDiv.classList.add('error-message');
+            msgDiv.innerText = text;
+            chatBox.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        function handleEnter(e) {
+        // Enter tugmasi bilan yuborish
+        msgInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') sendMessage();
-        }
+        });
     </script>
 
 </body>
